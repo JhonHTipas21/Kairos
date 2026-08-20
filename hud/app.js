@@ -185,7 +185,7 @@ function updateState(state, customDesc = null) {
     statusDesc.textContent = customDesc || config.desc;
     
     // Core visual node classes
-    coreNode.className = `relative w-16 h-16 rounded-full transition-all duration-300 flex items-center justify-center z-20 ${config.coreBg} border-2 ${config.borderClass} ${config.shadowClass}`;
+    coreNode.className = `relative w-28 h-28 rounded-full transition-all duration-300 flex items-center justify-center z-20 ${config.coreBg} border ${config.borderClass} ${config.shadowClass}`;
     
     // Core Icons representing state
     if (state === 'listening') {
@@ -463,3 +463,32 @@ drawWaveform();
 // 12. Run on Load
 connectWebSocket();
 logToTerminal('KAIROS-LOG', 'Sistemas listos. Conectando al orquestador central...');
+
+// 13. Diagnostics Drawer Toggle Actions
+const diagBtn = document.getElementById('diag-toggle-btn');
+const diagDrawer = document.getElementById('diag-drawer');
+const closeDiagBtn = document.getElementById('diag-close-btn');
+
+if (diagBtn && diagDrawer) {
+    diagBtn.addEventListener('click', () => {
+        diagDrawer.classList.remove('translate-x-full');
+    });
+}
+if (closeDiagBtn && diagDrawer) {
+    closeDiagBtn.addEventListener('click', () => {
+        diagDrawer.classList.add('translate-x-full');
+    });
+}
+
+// 14. Interactive Core Node Mouse/Touch Recording Trigger
+if (coreNode) {
+    coreNode.addEventListener('mousedown', (e) => {
+        e.preventDefault();
+        startVoiceCapture();
+    });
+    
+    coreNode.addEventListener('touchstart', (e) => {
+        e.preventDefault();
+        startVoiceCapture();
+    });
+}
