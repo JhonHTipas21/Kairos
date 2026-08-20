@@ -385,80 +385,166 @@ function updateMetrics(cpu, ram, latency) {
     if (latency !== undefined) metricLatency.textContent = `${latency}ms`;
 }
 
-// 11. Core Waveform Canvas Animation
+// 11. Core 3D Hologram Visualizer (Three.js WebGL)
 const canvas = document.getElementById('waveform-canvas');
-const ctx = canvas.getContext('2d');
+
+// Scene, Camera, and WebGL Renderer
+const scene = new THREE.Scene();
+const camera = new THREE.PerspectiveCamera(45, 1, 0.1, 1000);
+camera.position.z = 10;
+
+const renderer = new THREE.WebGLRenderer({ canvas: canvas, alpha: true, antialias: true });
+renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
 
 function resizeCanvas() {
-    canvas.width = canvas.parentElement.clientWidth * 0.6;
-    canvas.height = canvas.parentElement.clientHeight * 0.6;
+    const parent = canvas.parentElement;
+    const width = parent.clientWidth * 0.7;
+    const height = parent.clientHeight * 0.7;
+    renderer.setSize(width, height);
+    camera.aspect = 1;
+    camera.updateProjectionMatrix();
 }
 window.addEventListener('resize', resizeCanvas);
-// Small delay to ensure styles are loaded
 setTimeout(resizeCanvas, 100);
 
-let animationFrameId;
-let phase = 0;
+// Create Holographic Particle Sphere (using Fibonacci distribution)
+const particleCount = 500;
+const geometry = new THREE.BufferGeometry();
+const positions = new Float32Array(particleCount * 3);
+const initialPositions = new Float32Array(particleCount * 3);
 
-function drawWaveform() {
-    animationFrameId = requestAnimationFrame(drawWaveform);
+for (let i = 0; i < particleCount; i++) {
+    const offset = 2 / particleCount;
+    const increment = Math.PI * (3 - Math.sqrt(5));
     
-    const width = canvas.width;
-    const height = canvas.height;
-    ctx.clearRect(0, 0, width, height);
+    const y = ((i * offset) - 1) + (offset / 2);
+    const r = Math.sqrt(1 - Math.pow(y, 2));
+    const phi = i * increment;
     
-    ctx.lineWidth = 2;
+    const x = Math.cos(phi) * r;
+    const z = Math.sin(phi) * r;
     
-    // Change style according to current status
-    let wavesCount = 3;
-    let amplitude = 5;
-    let frequency = 0.05;
-    let color = 'rgba(6, 182, 212, 0.4)'; // Cyan
+    const radius = 3.3; // Base radius of the sphere
     
-    if (currentState === 'listening') {
-        amplitude = 25;
-        frequency = 0.15;
-        color = 'rgba(244, 63, 94, 0.5)'; // Rose/Red
-        wavesCount = 4;
-    } else if (currentState === 'thinking') {
-        amplitude = 12;
-        frequency = 0.08;
-        color = 'rgba(245, 158, 11, 0.5)'; // Amber/Yellow
-        wavesCount = 2;
-    } else if (currentState === 'speaking') {
-        // Voice-like modulation
-        amplitude = 18 + Math.sin(phase * 4) * 8;
-        frequency = 0.1;
-        color = 'rgba(16, 185, 129, 0.5)'; // Emerald/Green
-        wavesCount = 3;
-    } else { // idle
-        amplitude = 3;
-        frequency = 0.03;
-        color = 'rgba(6, 182, 212, 0.25)'; // faint cyan
-        wavesCount = 1;
-    }
+    positions[i * 3] = x * radius;
+    positions[i * 3 + 1] = y * radius;
+    positions[i * 3 + 2] = z * radius;
     
-    phase += 0.08;
-    
-    for (let i = 0; i < wavesCount; i++) {
-        ctx.beginPath();
-        const wavePhase = phase + i * (Math.PI / 4);
-        const waveOffset = i * 4;
-        ctx.strokeStyle = color;
-        
-        for (let x = 0; x < width; x++) {
-            // Draw horizontal sine wave centered vertically
-            const y = height / 2 + Math.sin(x * frequency + wavePhase) * (amplitude - waveOffset);
-            if (x === 0) {
-                ctx.moveTo(x, y);
-            } else {
-                ctx.lineTo(x, y);
-            }
-        }
-        ctx.stroke();
-    }
+    initialPositions[i * 3] = x * radius;
+    initialPositions[i * 3 + 1] = y * radius;
+    initialPositions[i * 3 + 2] = z * radius;
 }
-drawWaveform();
+
+geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+
+// Create glowing neon points
+const material = new THREE.PointsMaterial({
+    color: 0x06b6d4, // Default Cyan
+    size: 0.13,
+    transparent: true,
+    opacity: 0.75,
+    blending: THREE.AdditiveBlending
+});
+
+const particleSystem = new THREE.Points(geometry, material);
+scene.add(particleSystem);
+
+// Add inner wireframe sphere for visual depth
+const sphereGeo = new THREE.SphereGeometry(3.2, 12, 12);
+const sphereMat = new THREE.MeshBasicMaterial({
+    color: 0x06b6d4,
+    wireframe: true,
+    transparent: true,
+    opacity: 0.08
+});
+const wireframeSphere = new THREE.Mesh(sphereGeo, sphereMat);
+scene.add(wireframeSphere);
+
+let clock = new THREE.Clock();
+
+function animate3D() {
+    requestAnimationFrame(animate3D);
+    
+    const elapsedTime = clock.getElapsedTime();
+    const pos = geometry.attributes.position.array;
+    
+    let colorHex = 0x06b6d4; // Default Cyan
+    let rotationSpeed = 0.3;
+    let waveFreq = 2.0;
+    let waveAmp = 0.1;
+    
+    // Check states dynamically
+    if (currentState === 'listening') {
+        colorHex = 0xf43f5e; // Rose/Red
+        rotationSpeed = 1.3;
+        waveFreq = 7.0;
+        waveAmp = 0.55;
+    } else if (currentState === 'thinking') {
+        colorHex = 0xf59e0b; // Amber/Yellow
+        rotationSpeed = 2.2;
+        waveFreq = 4.0;
+        waveAmp = 0.18;
+    } else if (currentState === 'speaking') {
+        colorHex = 0x10b981; // Emerald/Green
+        rotationSpeed = 0.7;
+        waveFreq = 5.0;
+        waveAmp = 0.3 + Math.sin(elapsedTime * 6) * 0.15; // Pulse with voice
+    } else { // idle
+        colorHex = 0x06b6d4; // Cyan
+        rotationSpeed = 0.2;
+        waveFreq = 1.5;
+        waveAmp = 0.04;
+    }
+    
+    material.color.setHex(colorHex);
+    sphereMat.color.setHex(colorHex);
+    
+    // Wave displacement calculations on the particles
+    for (let i = 0; i < particleCount; i++) {
+        const xIdx = i * 3;
+        const yIdx = i * 3 + 1;
+        const zIdx = i * 3 + 2;
+        
+        const ix = initialPositions[xIdx];
+        const iy = initialPositions[yIdx];
+        const iz = initialPositions[zIdx];
+        
+        const len = Math.sqrt(ix*ix + iy*iy + iz*iz);
+        const dx = ix / len;
+        const dy = iy / len;
+        const dz = iz / len;
+        
+        // Deform using a beautiful sinusoidal noise
+        const offset = Math.sin(ix * waveFreq + elapsedTime * 4) * Math.cos(iy * waveFreq + elapsedTime * 3) * waveAmp;
+        
+        pos[xIdx] = ix + dx * offset;
+        pos[yIdx] = iy + dy * offset;
+        pos[zIdx] = iz + dz * offset;
+    }
+    
+    geometry.attributes.position.needsUpdate = true;
+    
+    // Rotate models
+    particleSystem.rotation.y = elapsedTime * rotationSpeed;
+    particleSystem.rotation.x = elapsedTime * (rotationSpeed * 0.5);
+    wireframeSphere.rotation.y = -elapsedTime * (rotationSpeed * 0.7);
+    
+    // High energy expansion and contraction on 'thinking' state
+    if (currentState === 'thinking') {
+        const scale = 1.0 + Math.sin(elapsedTime * 14) * 0.07;
+        particleSystem.scale.set(scale, scale, scale);
+        wireframeSphere.scale.set(scale, scale, scale);
+        sphereMat.opacity = 0.22;
+    } else {
+        particleSystem.scale.set(1, 1, 1);
+        wireframeSphere.scale.set(1, 1, 1);
+        sphereMat.opacity = 0.08;
+    }
+    
+    renderer.render(scene, camera);
+}
+animate3D();
+
 
 // 12. Run on Load
 connectWebSocket();
