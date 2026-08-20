@@ -1,8 +1,10 @@
 """
 Skill para abrir páginas web, buscar en Google y reproducir contenido en YouTube.
 """
-import webbrowser
+
 import urllib.parse
+import webbrowser
+
 
 def open_web_url(url: str) -> str:
     """
@@ -22,6 +24,7 @@ def open_web_url(url: str) -> str:
     except Exception as e:
         return f"Error abriendo la página web: {str(e)}"
 
+
 def search_google(query: str) -> str:
     """
     Realiza una consulta o búsqueda en Google utilizando el navegador predeterminado.
@@ -39,6 +42,7 @@ def search_google(query: str) -> str:
         return f"Buscando '{query}' en Google."
     except Exception as e:
         return f"Error realizando la búsqueda: {str(e)}"
+
 
 def play_youtube_video(video_keywords: str) -> str:
     """

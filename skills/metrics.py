@@ -1,12 +1,14 @@
 """
 Skill para recolectar y registrar métricas analíticas reales del sistema macOS.
 """
-import os
+
 import re
 import subprocess
-from pathlib import Path
 from datetime import datetime
+from pathlib import Path
+
 from config import KAIROS_VAULT_DIR
+
 
 def get_real_cpu_usage() -> float:
     try:
@@ -21,6 +23,7 @@ def get_real_cpu_usage() -> float:
     except Exception:
         return 15.0
 
+
 def get_real_ram_usage() -> float:
     try:
         output = subprocess.check_output("top -l 1 | grep PhysMem", shell=True).decode("utf-8")
@@ -31,11 +34,12 @@ def get_real_ram_usage() -> float:
             used_unit = match.group(2)
             memsize_bytes = int(subprocess.check_output(["sysctl", "-n", "hw.memsize"]).decode("utf-8").strip())
             total_gb = memsize_bytes / (1024**3)
-            used_gb = used_val if used_unit == 'G' else used_val / 1024
+            used_gb = used_val if used_unit == "G" else used_val / 1024
             return round((used_gb / total_gb) * 100, 1)
         return 55.0
     except Exception:
         return 60.0
+
 
 def get_real_disk_usage() -> float:
     try:
@@ -48,6 +52,7 @@ def get_real_disk_usage() -> float:
     except Exception:
         return 70.0
 
+
 def get_real_latency() -> int:
     try:
         output = subprocess.check_output(["ping", "-c", "1", "-t", "1", "8.8.8.8"]).decode("utf-8")
@@ -58,6 +63,7 @@ def get_real_latency() -> int:
     except Exception:
         return 25
 
+
 def log_system_metrics() -> str:
     """
     Obtiene las métricas de rendimiento reales del sistema macOS (CPU, RAM, Disco y Latencia de Red) y las registra en 'metricas/rendimiento.md'.
@@ -66,18 +72,18 @@ def log_system_metrics() -> str:
         Un reporte de texto con las métricas reales registradas.
     """
     metrics_path = Path(KAIROS_VAULT_DIR) / "metricas" / "rendimiento.md"
-    
+
     try:
         metrics_path.parent.mkdir(parents=True, exist_ok=True)
-        
+
         cpu_usage = get_real_cpu_usage()
         memory_usage = get_real_ram_usage()
         disk_usage = get_real_disk_usage()
         network_latency = get_real_latency()
         timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-        
+
         log_entry = f"| {timestamp} | {cpu_usage}% | {memory_usage}% | {disk_usage}% | {network_latency}ms |\n"
-        
+
         if not metrics_path.exists():
             header = (
                 "# Logs de Rendimiento Real del Sistema\n\n"
@@ -88,7 +94,7 @@ def log_system_metrics() -> str:
         else:
             with open(metrics_path, "a", encoding="utf-8") as f:
                 f.write(log_entry)
-                
+
         return f"Métricas de hardware registradas: CPU {cpu_usage}%, RAM {memory_usage}%, Disco {disk_usage}%, Latencia {network_latency}ms."
     except Exception as e:
         return f"Error al registrar las métricas de hardware: {str(e)}"

@@ -1,8 +1,10 @@
 """
 Skill para consultar el clima actual de cualquier ciudad utilizando el servicio wttr.in (libre de keys).
 """
-import urllib.request
+
 import urllib.parse
+import urllib.request
+
 
 def get_current_weather(city_name: str = "Cali") -> str:
     """
@@ -17,14 +19,11 @@ def get_current_weather(city_name: str = "Cali") -> str:
     # Codificar el nombre de la ciudad para la URL
     safe_city = urllib.parse.quote(city_name.strip())
     url = f"https://wttr.in/{safe_city}?format=%C+%t+Humedad:%h+Viento:%w"
-    
+
     try:
-        req = urllib.request.Request(
-            url, 
-            headers={'User-Agent': 'Mozilla/5.0'}
-        )
+        req = urllib.request.Request(url, headers={"User-Agent": "Mozilla/5.0"})
         with urllib.request.urlopen(req, timeout=5) as response:
-            weather_data = response.read().decode('utf-8').strip()
+            weather_data = response.read().decode("utf-8").strip()
             # Reemplazar el signo + si wttr.in lo devuelve como espaciador
             clean_weather = weather_data.replace("+", " ")
             return f"Reporte del clima actual en {city_name.capitalize()}: {clean_weather}."

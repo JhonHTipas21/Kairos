@@ -1,7 +1,9 @@
 """
 Skill para abrir aplicaciones nativas de macOS mediante comandos de consola.
 """
+
 import subprocess
+
 
 def open_application(app_name: str) -> str:
     """
@@ -14,7 +16,7 @@ def open_application(app_name: str) -> str:
         Mensaje de confirmación del estado de la operación.
     """
     clean_name = app_name.lower().strip()
-    
+
     # Mapeo de nombres comunes en español a nombres oficiales de macOS
     app_mapping = {
         "safari": "Safari",
@@ -34,15 +36,15 @@ def open_application(app_name: str) -> str:
         "vs code": "Visual Studio Code",
         "visual studio code": "Visual Studio Code",
         "musica": "Music",
-        "music": "Music"
+        "music": "Music",
     }
-    
+
     target_app = app_mapping.get(clean_name, app_name)
-    
+
     try:
         subprocess.run(["open", "-a", target_app], check=True)
         return f"Abriendo la aplicación '{target_app}', señor."
-    except Exception as e:
+    except Exception:
         # Fallback usando el nombre literal que proporcionó el usuario
         try:
             subprocess.run(["open", "-a", app_name], check=True)

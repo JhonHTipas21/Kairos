@@ -1,7 +1,9 @@
 """
 Skill para consultar y controlar configuraciones locales del sistema macOS.
 """
+
 import subprocess
+
 
 def adjust_system_volume(volume_percent: int) -> str:
     """
@@ -21,6 +23,7 @@ def adjust_system_volume(volume_percent: int) -> str:
     except Exception as e:
         return f"Error al ajustar el volumen del sistema: {str(e)}"
 
+
 def get_battery_status() -> str:
     """
     Obtiene información actual de la batería del sistema macOS (porcentaje, estado de carga y tiempo restante).
@@ -30,13 +33,14 @@ def get_battery_status() -> str:
     """
     try:
         output = subprocess.check_output(["pmset", "-g", "batt"]).decode("utf-8")
-        lines = output.strip().split('\n')
+        lines = output.strip().split("\n")
         if len(lines) > 1:
-            info = lines[1].split('\t')[-1]
+            info = lines[1].split("\t")[-1]
             return f"Estado de batería actual: {info}"
         return f"Lectura de la batería: {output}"
     except Exception as e:
         return f"Error al leer el estado de la batería: {str(e)}"
+
 
 def lock_macos_screen() -> str:
     """
@@ -53,6 +57,7 @@ def lock_macos_screen() -> str:
     except Exception as e:
         return f"Error al bloquear la pantalla: {str(e)}"
 
+
 def take_screenshot() -> str:
     """
     Toma una captura de pantalla completa del sistema macOS y la guarda en la carpeta de Descargas (Downloads) del usuario.
@@ -62,13 +67,13 @@ def take_screenshot() -> str:
     """
     import os
     from datetime import datetime
-    
+
     downloads_dir = os.path.expanduser("~/Downloads")
     os.makedirs(downloads_dir, exist_ok=True)
-    
+
     timestamp = datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
     filepath = os.path.join(downloads_dir, f"captura_{timestamp}.png")
-    
+
     try:
         subprocess.run(["screencapture", "-x", filepath], check=True)
         return f"Captura de pantalla guardada con éxito en la carpeta de Descargas como: captura_{timestamp}.png."
