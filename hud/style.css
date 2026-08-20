@@ -1,0 +1,187 @@
+/* KAIROS OS - Custom CSS for Sci-Fi HUD HUD Styling */
+
+:root {
+    --glow-cyan: 0 0 15px rgba(6, 182, 212, 0.4);
+    --glow-blue: 0 0 15px rgba(59, 130, 246, 0.4);
+    --glow-rose: 0 0 15px rgba(244, 63, 94, 0.4);
+}
+
+/* Glassmorphism Panels */
+.glass-panel {
+    background: rgba(10, 15, 30, 0.7);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border: 1px solid rgba(6, 182, 212, 0.15);
+    box-shadow: 
+        0 10px 30px rgba(0, 0, 0, 0.5),
+        inset 0 1px 0 rgba(255, 255, 255, 0.05);
+    border-radius: 1rem;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.glass-panel:hover {
+    border-color: rgba(6, 182, 212, 0.3);
+    box-shadow: 
+        0 15px 35px rgba(0, 0, 0, 0.6),
+        0 0 20px rgba(6, 182, 212, 0.05),
+        inset 0 1px 0 rgba(255, 255, 255, 0.08);
+}
+
+/* Sci-fi Glow and Animations */
+.glow-cyan { box-shadow: var(--glow-cyan); }
+.glow-blue { box-shadow: var(--glow-blue); }
+.glow-rose { box-shadow: var(--glow-rose); }
+
+/* Spin Animations */
+@keyframes spin-slow {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+@keyframes spin-reverse {
+    0% { transform: rotate(360deg); }
+    100% { transform: rotate(0deg); }
+}
+
+.animate-spin-slow {
+    animation: spin-slow 20s linear infinite;
+}
+
+.animate-spin-reverse {
+    animation: spin-reverse 15s linear infinite;
+}
+
+/* Record Button Styling States */
+#record-btn {
+    background: rgba(15, 23, 42, 0.6);
+    border-color: rgba(6, 182, 212, 0.3);
+    color: #22d3ee;
+    transition: all 0.2s ease-in-out;
+}
+
+#record-btn:hover {
+    background: rgba(6, 182, 212, 0.1);
+    border-color: rgba(6, 182, 212, 0.6);
+    box-shadow: 0 0 15px rgba(6, 182, 212, 0.3);
+}
+
+#record-btn:active, #record-btn.recording {
+    background: rgba(244, 63, 94, 0.15);
+    border-color: rgba(244, 63, 94, 0.6);
+    color: #fda4af;
+    box-shadow: 0 0 25px rgba(244, 63, 94, 0.5);
+    transform: scale(0.98);
+}
+
+/* Custom Scrollbar */
+.scrollbar-thin::-webkit-scrollbar {
+    width: 4px;
+    height: 4px;
+}
+
+.scrollbar-thin::-webkit-scrollbar-track {
+    background: rgba(15, 23, 42, 0.3);
+}
+
+.scrollbar-thin::-webkit-scrollbar-thumb {
+    background: rgba(6, 182, 212, 0.3);
+    border-radius: 2px;
+}
+
+.scrollbar-thin::-webkit-scrollbar-thumb:hover {
+    background: rgba(6, 182, 212, 0.6);
+}
+
+/* Style Markdown rendering for Plan Diario */
+#daily-plan-container h1 {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: #e2e8f0;
+    border-bottom: 1px solid rgba(6, 182, 212, 0.2);
+    padding-bottom: 0.5rem;
+    margin-bottom: 1rem;
+    letter-spacing: 0.05em;
+}
+
+#daily-plan-container h2 {
+    font-family: 'Outfit', sans-serif;
+    font-size: 0.95rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    color: #06b6d4;
+    margin-top: 1rem;
+    margin-bottom: 0.75rem;
+    letter-spacing: 0.05em;
+}
+
+#daily-plan-container ol, #daily-plan-container ul {
+    margin-left: 0.5rem;
+    space-y: 0.5rem;
+}
+
+#daily-plan-container li {
+    font-family: 'Outfit', sans-serif;
+    font-size: 0.85rem;
+    color: #cbd5e1;
+    margin-bottom: 0.5rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+/* Styled checkbox replacement in Daily Plan */
+#daily-plan-container li input[type="checkbox"] {
+    appearance: none;
+    background-color: transparent;
+    margin: 0;
+    font: inherit;
+    color: #06b6d4;
+    width: 14px;
+    height: 14px;
+    border: 1px solid rgba(6, 182, 212, 0.4);
+    border-radius: 3px;
+    transform: translateY(-1px);
+    display: grid;
+    place-content: center;
+    cursor: pointer;
+}
+
+#daily-plan-container li input[type="checkbox"]::before {
+    content: "";
+    width: 8px;
+    height: 8px;
+    transform: scale(0);
+    transition: 120ms transform ease-in-out;
+    box-shadow: inset 1em 1em #06b6d4;
+    background-color: CanvasText;
+    clip-path: polygon(14% 0%, 0% 14%, 28% 42%, 100% 0%, 100% 14%, 28% 86%);
+}
+
+#daily-plan-container li input[type="checkbox"]:checked::before {
+    transform: scale(1);
+}
+
+#daily-plan-container li input[type="checkbox"]:checked + span {
+    text-decoration: line-through;
+    color: #64748b;
+}
+
+/* Pulsing Core Nodes states */
+.core-listening {
+    border-color: #f43f5e !important;
+    shadow: 0 0 25px rgba(244, 63, 94, 0.6) !important;
+    background-color: rgba(244, 63, 94, 0.1) !important;
+}
+
+.core-thinking {
+    border-color: #f59e0b !important;
+    shadow: 0 0 25px rgba(245, 158, 11, 0.6) !important;
+    background-color: rgba(245, 158, 11, 0.1) !important;
+}
+
+.core-speaking {
+    border-color: #10b981 !important;
+    shadow: 0 0 25px rgba(16, 185, 129, 0.6) !important;
+    background-color: rgba(16, 185, 129, 0.1) !important;
+}

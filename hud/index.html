@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="es" class="h-full bg-slate-950 text-slate-100">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KAIROS OS - Dashboard Inteligente</title>
+    <!-- Google Fonts: Orbitron for Sci-Fi HUD, Inter for UI text, JetBrains Mono for logs -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:ital,wght@0,100..800;1,100..800&family=Orbitron:wght@400..900&family=Outfit:wght@100..900&display=swap" rel="stylesheet">
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Outfit', 'sans-serif'],
+                        orbitron: ['Orbitron', 'sans-serif'],
+                        mono: ['JetBrains Mono', 'monospace'],
+                    },
+                    colors: {
+                        kairos: {
+                            cyan: '#06b6d4',
+                            blue: '#3b82f6',
+                            purple: '#8b5cf6',
+                            emerald: '#10b981',
+                            rose: '#f43f5e',
+                            amber: '#f59e0b',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body class="h-full font-sans overflow-hidden flex flex-col justify-between selection:bg-cyan-500/30 selection:text-cyan-200">
+
+    <!-- Glowing Background Orbs -->
+    <div class="fixed top-[-10%] left-[-10%] w-[50%] h-[50%] rounded-full bg-cyan-900/10 blur-[120px] pointer-events-none z-0"></div>
+    <div class="fixed bottom-[-10%] right-[-10%] w-[50%] h-[50%] rounded-full bg-purple-900/10 blur-[120px] pointer-events-none z-0"></div>
+    
+    <!-- Top HUD Bar -->
+    <header class="relative z-10 border-b border-cyan-500/20 bg-slate-950/80 backdrop-blur-md px-6 py-4 flex justify-between items-center">
+        <div class="flex items-center gap-3">
+            <div class="relative w-8 h-8 flex items-center justify-center">
+                <span class="absolute w-full h-full rounded-full border border-cyan-500/30 animate-ping"></span>
+                <span class="absolute w-6 h-6 rounded-full border-2 border-cyan-400/60 animate-pulse"></span>
+                <span class="w-3 h-3 rounded-full bg-cyan-400"></span>
+            </div>
+            <div>
+                <h1 class="font-orbitron font-bold text-lg tracking-wider bg-gradient-to-r from-cyan-400 via-blue-400 to-purple-400 bg-clip-text text-transparent">KAIROS.OS</h1>
+                <p class="text-[10px] font-mono text-slate-500 tracking-widest uppercase">System Core Version 1.0.0-Gemini</p>
+            </div>
+        </div>
+
+        <!-- Connection and Local Time Info -->
+        <div class="flex items-center gap-6 text-xs font-mono">
+            <div class="flex items-center gap-2">
+                <span class="text-slate-500">WS SERVER:</span>
+                <span id="connection-status" class="px-2 py-0.5 rounded text-[10px] font-bold border border-rose-500/30 bg-rose-500/10 text-rose-400 flex items-center gap-1.5">
+                    <span class="w-1.5 h-1.5 rounded-full bg-rose-400 animate-pulse"></span>
+                    DESCONECTADO
+                </span>
+            </div>
+            <div class="hidden sm:block text-slate-400">
+                <span id="current-time">00:00:00</span>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Grid Content -->
+    <main class="relative z-10 flex-1 grid grid-cols-1 lg:grid-cols-12 gap-6 p-6 overflow-hidden max-h-[calc(100vh-140px)]">
+        
+        <!-- Left Panel (4 Cols): Core Status and Speech Trigger -->
+        <section class="lg:col-span-4 flex flex-col gap-6 h-full overflow-hidden">
+            <!-- Brain / Status Widget -->
+            <div class="glass-panel p-6 flex flex-col items-center justify-center text-center relative overflow-hidden flex-1 min-h-[300px]">
+                <div class="absolute top-2 left-2 text-[10px] font-mono text-slate-500">MÓDULO 01 // CEREBRO</div>
+                
+                <!-- Holographic Visualizer Ring -->
+                <div class="relative w-48 h-48 flex items-center justify-center mb-6">
+                    <!-- Rotating rings -->
+                    <div id="ring-1" class="absolute w-full h-full rounded-full border border-dashed border-cyan-500/30 animate-spin-slow"></div>
+                    <div id="ring-2" class="absolute w-[85%] h-[85%] rounded-full border border-double border-blue-500/20 animate-spin-reverse"></div>
+                    <div id="ring-3" class="absolute w-[70%] h-[70%] rounded-full border border-cyan-400/40 animate-pulse"></div>
+                    
+                    <!-- Voice Waveform Canvas (animated via JS) -->
+                    <canvas id="waveform-canvas" class="absolute w-[60%] h-[60%] rounded-full opacity-80 z-10"></canvas>
+                    
+                    <!-- Center Core Node -->
+                    <div id="core-node" class="relative w-16 h-16 rounded-full bg-slate-900 border-2 border-cyan-400 shadow-[0_0_20px_rgba(6,182,212,0.4)] flex items-center justify-center z-20 transition-all duration-300">
+                        <svg class="w-8 h-8 text-cyan-400 transition-all duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24" id="core-icon">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z"></path>
+                        </svg>
+                    </div>
+                </div>
+
+                <div class="w-full">
+                    <h2 id="status-label" class="font-orbitron font-bold text-xl text-cyan-400 tracking-wider transition-all duration-300">MODO REPOSO</h2>
+                    <p id="status-desc" class="text-xs text-slate-400 mt-1 font-mono uppercase tracking-wider">Esperando comando...</p>
+                </div>
+            </div>
+
+            <!-- Push-to-Talk Recording Trigger -->
+            <div class="glass-panel p-6 flex flex-col items-center justify-between gap-4">
+                <div class="w-full text-left text-[10px] font-mono text-slate-500">MÓDULO 02 // OÍDOS</div>
+                
+                <button id="record-btn" class="w-full py-4 px-6 rounded-xl font-bold uppercase tracking-wider transition-all duration-300 flex items-center justify-center gap-3 border shadow-md relative overflow-hidden select-none cursor-pointer">
+                    <span id="btn-glow" class="absolute inset-0 bg-gradient-to-r from-cyan-500 to-blue-500 opacity-20 blur-lg transition-opacity duration-300"></span>
+                    <span id="btn-icon" class="relative w-4 h-4 rounded-full bg-cyan-400 animate-pulse"></span>
+                    <span id="btn-text" class="relative text-cyan-300 font-orbitron">Iniciar Grabación</span>
+                </button>
+
+                <div class="text-[10px] text-slate-400 font-mono text-center leading-relaxed">
+                    Mantén presionada la <kbd class="px-2 py-0.5 bg-slate-800 text-slate-200 border border-slate-700 rounded text-[9px] shadow-sm">Barra Espaciadora</kbd> en el teclado o el botón de arriba para hablar. Suéltala para procesar.
+                </div>
+            </div>
+        </section>
+
+        <!-- Right Panel (8 Cols): daily plan, metrics and command console -->
+        <section class="lg:col-span-8 flex flex-col gap-6 h-full overflow-hidden">
+            
+            <!-- Upper split: Daily Plan (Left) and Metrics & Notes (Right) -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 flex-1 min-h-0">
+                <!-- Daily Plan Panel -->
+                <div class="glass-panel p-6 flex flex-col overflow-hidden relative min-h-0">
+                    <div class="absolute top-2 left-2 text-[10px] font-mono text-slate-500">MÓDULO 03 // MEMORIA: PLAN DIARIO</div>
+                    <div class="mt-4 flex-1 overflow-y-auto pr-2 scrollbar-thin" id="daily-plan-container">
+                        <!-- Will be dynamically loaded -->
+                        <div class="flex flex-col items-center justify-center h-full text-center text-slate-500">
+                            <svg class="w-12 h-12 stroke-1 opacity-40 mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"></path>
+                            </svg>
+                            <p class="text-xs font-mono uppercase tracking-wider">Cargando Plan Diario...</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Metrics and Inbox Panel -->
+                <div class="glass-panel p-6 flex flex-col gap-4 overflow-hidden relative min-h-0">
+                    <div class="absolute top-2 left-2 text-[10px] font-mono text-slate-500">MÓDULO 04 // MÉTRICAS Y NOTAS</div>
+                    
+                    <!-- System Metrics Grid -->
+                    <div class="grid grid-cols-3 gap-3 mt-4">
+                        <div class="metric-card p-3 rounded-lg border border-slate-800 bg-slate-900/50 text-center flex flex-col items-center">
+                            <span class="text-[9px] font-mono text-slate-400 uppercase">CPU</span>
+                            <span id="metric-cpu" class="text-lg font-orbitron font-bold text-cyan-400 mt-1">--%</span>
+                        </div>
+                        <div class="metric-card p-3 rounded-lg border border-slate-800 bg-slate-900/50 text-center flex flex-col items-center">
+                            <span class="text-[9px] font-mono text-slate-400 uppercase">RAM</span>
+                            <span id="metric-ram" class="text-lg font-orbitron font-bold text-blue-400 mt-1">--%</span>
+                        </div>
+                        <div class="metric-card p-3 rounded-lg border border-slate-800 bg-slate-900/50 text-center flex flex-col items-center">
+                            <span class="text-[9px] font-mono text-slate-400 uppercase">LATENCY</span>
+                            <span id="metric-latency" class="text-lg font-orbitron font-bold text-purple-400 mt-1">--ms</span>
+                        </div>
+                    </div>
+
+                    <!-- Inbox / Notes Section -->
+                    <div class="flex-1 flex flex-col min-h-0 border border-slate-800 rounded-lg bg-slate-900/30 p-4">
+                        <div class="text-[10px] font-mono text-slate-400 mb-2 uppercase border-b border-slate-800 pb-1 flex justify-between items-center">
+                            <span>Resumen del Inbox</span>
+                            <span class="w-1.5 h-1.5 rounded-full bg-cyan-400 animate-pulse"></span>
+                        </div>
+                        <div class="flex-1 overflow-y-auto pr-2 scrollbar-thin text-xs leading-relaxed text-slate-300" id="inbox-summary-container">
+                            <p class="text-slate-500 font-mono text-center mt-6">Cargando bandeja de entrada...</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Terminal and Activity Logs (Bottom) -->
+            <div class="glass-panel p-6 flex flex-col h-[220px] relative overflow-hidden">
+                <div class="absolute top-2 left-2 text-[10px] font-mono text-slate-500">MÓDULO 05 // TERMINAL DE OPERACIONES</div>
+                
+                <!-- Terminal Stream Console -->
+                <div id="terminal-log" class="flex-1 overflow-y-auto mt-4 font-mono text-xs text-slate-400 space-y-1.5 pr-2 scrollbar-thin scroll-smooth select-text bg-slate-950/50 border border-slate-900 rounded p-3">
+                    <div class="text-cyan-500">[KAIROS-LOG] Inicializando consola de comunicación...</div>
+                    <div class="text-slate-500">[SYSTEM] Esperando conexión de websocket...</div>
+                </div>
+
+                <!-- Input area for typing -->
+                <div class="mt-3 flex gap-3 items-center border border-slate-800 rounded-lg bg-slate-900/50 px-3 py-1.5">
+                    <span class="text-cyan-400 font-mono text-xs font-bold">$</span>
+                    <input type="text" id="terminal-input" placeholder="Ingresa comando de texto o haz una pregunta..." class="flex-1 bg-transparent border-none outline-none focus:ring-0 text-xs font-mono text-slate-200 placeholder-slate-600">
+                    <button id="send-btn" class="text-xs font-mono uppercase bg-cyan-500/10 hover:bg-cyan-500/20 text-cyan-400 border border-cyan-500/30 px-3 py-1 rounded transition-colors duration-200 cursor-pointer">
+                        Enviar
+                    </button>
+                </div>
+            </div>
+
+        </section>
+
+    </main>
+
+    <!-- Bottom Status Line -->
+    <footer class="relative z-10 border-t border-slate-900 bg-slate-950 px-6 py-2 flex justify-between items-center text-[10px] font-mono text-slate-500">
+        <div>SYS_OPERATIONAL // SECURE_SOCKET: CONNECTED</div>
+        <div class="flex items-center gap-4">
+            <span>MIC: <span id="footer-mic-status" class="text-slate-400 font-bold">MUTED</span></span>
+            <span>AUDIO_OUT: <span class="text-emerald-400 font-bold">READY</span></span>
+        </div>
+    </footer>
+
+    <script src="app.js"></script>
+</body>
+</html>
