@@ -55,6 +55,10 @@ To run the system, you need Python 3.9+ and macOS. The following local binary pa
   - `plan.py`: Daily schedule planner.
   - `metrics.py`: System performance telemetry logs.
   - `inbox.py`: Markdown note summaries.
+  - `persona.py`: Dynamic voice personality switching.
+  - `weather.py`: Weather reports using wttr.in.
+  - `news.py`: Keyless Google News RSS parser.
+  - `wikipedia.py`: Fast Spanish Wikipedia searches via REST API.
 
 ## Usage
 
