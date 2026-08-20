@@ -1,0 +1,26 @@
+# Environment files
+.env
+
+# Local vault (Obsidian markdown files)
+vault/
+
+# Python Cache
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Virtual environments
+.venv/
+env/
+venv/
+ENV/
+
+# OS-specific files
+.DS_Store
+Thumbs.db
+
+# Temporary logs and runtime files
+*.log
+*.tmp
+*.mp3
