@@ -35,6 +35,7 @@ whisper_model = None
 chat_session = None
 gemini_client = None
 audio_stream = None
+current_voice = VOICE_NAME
 recording = False
 audio_buffer = []
 skill_map = {}
@@ -336,7 +337,7 @@ async def speak_response(text: str):
         temp_mp3_path = f.name
         
     try:
-        communicate = edge_tts.Communicate(clean_text, VOICE_NAME)
+        communicate = edge_tts.Communicate(clean_text, current_voice)
         await communicate.save(temp_mp3_path)
         
         # Ejecutar afplay (macOS native player) en un hilo secundario para evitar bloquear el bucle de eventos
