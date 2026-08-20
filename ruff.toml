@@ -1,0 +1,31 @@
+# Configuración de Ruff para Kairós OS
+
+# Exclusión de carpetas de caché, datos y entornos virtuales
+exclude = [
+    ".git",
+    ".github",
+    "__pycache__",
+    "vault",
+    ".venv",
+    "env",
+    "venv",
+]
+
+# Longitud máxima de línea estándar
+line-length = 120
+
+# Versión objetivo de Python
+target-version = "py39"
+
+[lint]
+# Reglas habilitadas:
+# E: pycodestyle (errores de formato)
+# F: Pyflakes (análisis lógico y errores sintácticos)
+# I: isort (ordenamiento inteligente de imports)
+# W: pycodestyle (advertencias)
+select = ["E", "F", "I", "W"]
+
+ignore = ["E501"]
+
+[lint.isort]
+combine-as-imports = true
